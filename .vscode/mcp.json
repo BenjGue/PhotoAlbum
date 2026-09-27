@@ -1,0 +1,42 @@
+{
+  // MCP servers for the PhotoAlbum (.NET) modernization.
+  // Docs: https://code.visualstudio.com/docs/copilot/chat/mcp-servers
+  "inputs": [
+    {
+      // Prompted once and stored securely — never hardcode secrets here.
+      "type": "promptString",
+      "id": "azure-subscription-id",
+      "description": "Azure subscription ID used for deployment tools",
+      "password": false
+    }
+  ],
+  "servers": {
+    // ── Azure MCP server: resource queries, quotas, deploy, diagnostics ──
+    "azure": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@azure/mcp@latest", "server", "start"],
+      "env": {
+        "AZURE_SUBSCRIPTION_ID": "${input:azure-subscription-id}"
+      }
+    },
+
+    // ── GitHub MCP server (remote): repos, issues, PRs for the migration ──
+    "github": {
+      "type": "http",
+      "url": "https://api.githubcopilot.com/mcp/"
+    },
+
+    // ── Microsoft Learn MCP server (remote): official .NET 10 / EF Core 10 breaking changes ──
+    "microsoft-learn": {
+      "type": "http",
+      "url": "https://learn.microsoft.com/api/mcp"
+    }
+  }
+}
+// NOTES
+// 1. The appmod-* tools (AppCAT assessment, build, tests, CVE check) are registered
+//    automatically by the "GitHub Copilot app modernization" VS Code extension for .NET —
+//    no entry is needed here.
+// 2. After editing this file run "MCP: List Servers" in the Command Palette
+//    and start/inspect the servers.
